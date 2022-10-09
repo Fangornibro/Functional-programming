@@ -1,0 +1,22 @@
+(define (factorial n)
+  (define (fac-times n acc)
+    (if (= n 0)
+        acc
+        (fac-times (- n 1) (* acc n))))
+  (if (< n 0)
+      (display "Невірний параметр!")
+      (fac-times n 1)))
+(factorial 4)
+;Функцiя для зчитування чисел написаних користувачем
+(define (userInput s)
+  (display "Please enter number ")
+  (display s)
+  (display ": ")
+  (define n (read))
+  n)
+
+(define b (userInput "b"))
+(define p (userInput "p"))
+(define m (userInput "m"))
+(if (and (and (number? b) (number? p)) (number? m))
+    (display "Hui"))
