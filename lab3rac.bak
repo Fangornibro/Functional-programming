@@ -1,0 +1,240 @@
+;14.1
+;Метод простої ітерації
+;e**x + ln(x) - 10 * x = 0
+;x = (e**x + ln(x))/10
+;fi'(x) = (e**x)/10 + 1/(10*x)
+;fi''(x) = (e**x)/10 - 1/(10*x**2)
+(display "14.1")
+(display "Метод простої iтерацiї")
+definition iterations x0 = 
+    //Знаходимо x1 за формолую 
+    let x1 = ((Math.E**x0) + (Math.Log(x0,Math.E)))/10.
+    //Знаходимо рiзницю x0 - x1
+    let dif = Math.Abs(x0 - x1)
+    //Виводимо результати
+    printf "x0 = %f x1 = %f " x0 x1
+    printfn "difference = %f" dif
+    if dif > 0.001 then
+        iterations x1
+        
+//Як початкове наближення виберемо:
+let findx0 a b = 
+    let x0 = (a + b) / 2.
+    x0
+
+let a = 0.5
+let b = 1.
+let x0 = findx0 a b
+//Перевірка на збіжність
+let check = ((Math.E**x0)/10.) + (1./(10.*x0))
+if check < 1 then
+    printfn "Сonvergence check: %f < 1       Success" check
+    iterations (x0) 
+else 
+    printfn "Сonvergence check: %f < 1       Fail" check
+
+//Метод дотичних
+printfn "Метод дотичних"
+//Розрахунок функцiї
+let f x =
+    let fx = ((Math.E**x) + (Math.Log(x0,Math.E)))/10.
+    fx
+//Розрахунок похiдної вiд функцiї
+let df x =
+    let fx = ((Math.E**x)/10.) + (1./(10.*x))
+    fx
+//Розрахунок подвiйної похiдної вiд функцiї
+let d2f x =
+    let fx = ((Math.E**x)/10.) - (1./(10.*(x**2)))
+    fx
+
+//Рекурсивна функцiя з формулою дотичних
+let rec tangent xn i = 
+    let newi = i + 1
+    let x0 = xn
+    let newxn = x0 - f x0/df x0
+    printfn "%i-th iteration = %f; difference = %f" newi newxn (Math.Abs(x0 - newxn))
+    //Точнiсть
+    if Math.Abs(x0 - newxn) > 0.001 then
+        tangent newxn newi
+//Початкове приближення
+let xn = x0 - (f x0/df x0)
+
+tangent xn 0
+
+printfn "14.2"
+//Розрахунок функцiї
+let f1 x =
+    let fx = x * (Math.E**(-x))
+    fx
+//Цикл лiвого прямокутника
+let rec left_rect_cycle a h n i sum =
+    let newn = n - 1.
+    if i <= newn then
+        let newi = i + 1.
+        let newsum = sum + (h * f (a + i * h))
+        left_rect_cycle a h n newi newsum
+    else
+        sum
+//Обрахунок лiвим прямокутником
+let left_rect a b n =
+    let h = (b - a)/n
+    left_rect_cycle a h n 0 0
+//Цикл правого прямокутника
+let rec right_rect_cycle a h n i sum =
+    if i <= n then
+        let newi = i + 1.
+        let newsum = sum + (h * f (a + i * h))
+        right_rect_cycle a h n newi newsum
+    else
+        sum
+//Обрахунок правим прямокутником
+let right_rect a b n =
+    let h = (b - a)/n
+    right_rect_cycle a h n 1 0
+//Цикл Сiмпсона
+let rec Sympson_cycle a h n i sum =
+    let newn = n - 1.
+    if i <= newn then
+        
+        let newi = i + 1.
+        let k = 2. + 2. * (newi%2.)
+        let newsum = sum + (k * f (a + i * h))
+        Sympson_cycle a h n newi newsum
+    else
+        sum
+//Обрахунок Сiмпсона
+let Sympson a b n =
+    let h = (b - a)/n
+    let sum = Sympson_cycle a h n 1 (f a + f b) * h/3.
+    sum
+
+let a1 = 1
+let b1 = 2
+let n = 1000
+printfn "Left rectangle %f" (left_rect a1 b1 n)
+printfn "Right rectangle %f" (right_rect a1 b1 n)
+printfn "Sympson %f" (Sympson a1 b1 n)
+
+//Кузьмiн Дмитро IПЗ-42
+
+open System
+
+//14.1
+//Метод простої ітерації
+//e**x + ln(x) - 10 * x = 0
+//x = (e**x + ln(x))/10
+//fi'(x) = (e**x)/10 + 1/(10*x)
+//fi''(x) = (e**x)/10 - 1/(10*x**2)
+printfn "14.1"
+printfn "Метод простої iтерацiї"
+let rec iterations x0 = 
+    //Знаходимо x1 за формолую 
+    let x1 = ((Math.E**x0) + (Math.Log(x0,Math.E)))/10.
+    //Знаходимо рiзницю x0 - x1
+    let dif = Math.Abs(x0 - x1)
+    //Виводимо результати
+    printf "x0 = %f x1 = %f " x0 x1
+    printfn "difference = %f" dif
+    if dif > 0.001 then
+        iterations x1
+        
+//Як початкове наближення виберемо:
+let findx0 a b = 
+    let x0 = (a + b) / 2.
+    x0
+
+let a = 0.5
+let b = 1.
+let x0 = findx0 a b
+//Перевірка на збіжність
+let check = ((Math.E**x0)/10.) + (1./(10.*x0))
+if check < 1 then
+    printfn "Сonvergence check: %f < 1       Success" check
+    iterations (x0) 
+else 
+    printfn "Сonvergence check: %f < 1       Fail" check
+
+//Метод дотичних
+printfn "Метод дотичних"
+//Розрахунок функцiї
+let f x =
+    let fx = ((Math.E**x) + (Math.Log(x0,Math.E)))/10.
+    fx
+//Розрахунок похiдної вiд функцiї
+let df x =
+    let fx = ((Math.E**x)/10.) + (1./(10.*x))
+    fx
+//Розрахунок подвiйної похiдної вiд функцiї
+let d2f x =
+    let fx = ((Math.E**x)/10.) - (1./(10.*(x**2)))
+    fx
+
+//Рекурсивна функцiя з формулою дотичних
+let rec tangent xn i = 
+    let newi = i + 1
+    let x0 = xn
+    let newxn = x0 - f x0/df x0
+    printfn "%i-th iteration = %f; difference = %f" newi newxn (Math.Abs(x0 - newxn))
+    //Точнiсть
+    if Math.Abs(x0 - newxn) > 0.001 then
+        tangent newxn newi
+//Початкове приближення
+let xn = x0 - (f x0/df x0)
+
+tangent xn 0
+
+printfn "14.2"
+//Розрахунок функцiї
+let f1 x =
+    let fx = x * (Math.E**(-x))
+    fx
+//Цикл лiвого прямокутника
+let rec left_rect_cycle a h n i sum =
+    let newn = n - 1.
+    if i <= newn then
+        let newi = i + 1.
+        let newsum = sum + (h * f (a + i * h))
+        left_rect_cycle a h n newi newsum
+    else
+        sum
+//Обрахунок лiвим прямокутником
+let left_rect a b n =
+    let h = (b - a)/n
+    left_rect_cycle a h n 0 0
+//Цикл правого прямокутника
+let rec right_rect_cycle a h n i sum =
+    if i <= n then
+        let newi = i + 1.
+        let newsum = sum + (h * f (a + i * h))
+        right_rect_cycle a h n newi newsum
+    else
+        sum
+//Обрахунок правим прямокутником
+let right_rect a b n =
+    let h = (b - a)/n
+    right_rect_cycle a h n 1 0
+//Цикл Сiмпсона
+let rec Sympson_cycle a h n i sum =
+    let newn = n - 1.
+    if i <= newn then
+        
+        let newi = i + 1.
+        let k = 2. + 2. * (newi%2.)
+        let newsum = sum + (k * f (a + i * h))
+        Sympson_cycle a h n newi newsum
+    else
+        sum
+//Обрахунок Сiмпсона
+let Sympson a b n =
+    let h = (b - a)/n
+    let sum = Sympson_cycle a h n 1 (f a + f b) * h/3.
+    sum
+
+let a1 = 1
+let b1 = 2
+let n = 1000
+printfn "Left rectangle %f" (left_rect a1 b1 n)
+printfn "Right rectangle %f" (right_rect a1 b1 n)
+printfn "Sympson %f" (Sympson a1 b1 n)
+
