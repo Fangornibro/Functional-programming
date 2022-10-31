@@ -1,0 +1,166 @@
+;Кузьмiн Дмитро IПЗ-42
+;14.1
+(display "14.1")
+;Функцiя для зчитування чисел написаних користувачем
+(define (userInput s)
+  (display "Please enter number ")
+  (display s)
+  (display ": ")
+  (define n (read))
+  n)
+;Додавання двох списків
+(define (my-append lis1 lis2)
+  (cond ((null? lis1)
+         lis2)
+        (else
+         (cons (car lis1)
+               (my-append (cdr lis1) lis2)))))
+;Кількість елементів списку
+(define (my-length lis)
+   (cond ((null? lis)
+          0)
+         (else
+          (+ 1 (my-length (cdr lis))))))
+;Знаходимо усi шестикутнi числа й додаємо їх до списку
+(define (listFilling nstart nend lis1)
+  (cond
+    ((not (= nstart nend))
+     ;Додаємо до списку новий список, що складається з наступного шестикутного числа
+     (listFilling (+ nstart 1) nend (my-append lis1 (list (- (* (* (+ nstart 1) (+ nstart 1)) 2) (+ nstart 1)))))
+     )
+    (else
+     lis1
+     )
+    ))
+;Знаходимо суму парних чисел списку
+(define (evenNumbersSum lis1 sum)
+  (cond
+    ((not (= (my-length lis1) 0))
+     (cond
+       ((= (remainder (car lis1) 2) 0)
+        (evenNumbersSum (cdr lis1) (+ sum (car lis1)))
+        )
+       (else
+        (evenNumbersSum (cdr lis1) sum)
+        )
+       )
+     )
+    (else
+     sum
+     )
+    )
+  )
+;Створюємо список в якому замінили значення, кратні 5, на значення, помножені на 10.
+let rec changingMultiplesOfFive (list : 'a list) resultlist =
+    ;Алгоритм такий же як й у функцiї evenNumbersSum, але повертаємо новий список
+    if list.Length <> 0 then
+        if list.Head % 5. = 0. then
+            let newlist = list.Tail
+            let newresultlist = resultlist @ [list.[0] * 10.]
+            changingMultiplesOfFive newlist newresultlist
+        else
+            let newlist = list.Tail
+            let newresultlist = resultlist @ [list.[0]]
+            changingMultiplesOfFive newlist newresultlist
+    else resultlist
+
+let rec sublistCreate (list : 'a list) resultlist =
+    ;Алгоритм такий же як й у попереднiх двох функцiй
+    if list.Length <> 0 then
+        if list.Head % 10. = 0. then
+            let newlist = list.Tail
+            let newresultlist = resultlist @ [list.[0]]
+            sublistCreate newlist newresultlist
+        else
+            let newlist = list.Tail
+            sublistCreate newlist resultlist
+    else resultlist
+(define n (userInput "n"))
+(define lis1 (list))
+(define lis1 (listFilling 0 n lis1))
+(display "\nList of hexagonal numbers: \n")
+(display lis1)
+(display "\nEven numbers sum = \n")
+(define sum (evenNumbersSum lis1 0))
+(display sum)
+(display "\nList of hexagonal numbers with changed multiples of five numbers: \n")
+let newlist = changingMultiplesOfFive list empty
+(display "\nSublist with multiples of ten numbers: \n")
+let sublist = sublistCreate newlist empty
+;14.2
+(display "14.2")
+;Обраховуємо час вiд замовлення до отримання товару
+let timeOrderError deliveryTime minusError plusError =
+    let rnd = Random()
+    let time = deliveryTime + rnd.Next(minusError, plusError)
+    time
+
+;Створюємо список з кiлькiстю товарiв у точках
+let rec allDemands points demandList num=
+    if points <> 0 then
+        let newPoint = points - 1
+        let newdemandList = demandList @ [num]
+        allDemands newPoint newdemandList num
+    else 
+        demandList
+;Перевiрка на те чи достатньо товару у магазинi
+let isThereEnoughProduct curProduct newcurProduct =
+    if newcurProduct < 0 then
+        curProduct
+    else
+        newcurProduct
+;Перевiрка на те чи достатньо товару для точки
+let isThereEnoughProductSpot curProduct newcurProduct newcurProductShop =
+    if newcurProduct < 0 || newcurProductShop < 0 then
+        printfn "Невдоволенний запит"
+        curProduct
+    else
+        printfn "Запит вдоволено"
+        newcurProduct
+;Функцiя виклику наступного дня
+let rec nextDay day maxDays minusEachDay daysForDeliverToSpot daysForDeliverToShop expetcDaysForDeliver curProductSpot numberOfSpots curProductShop= 
+    if day <> maxDays then
+        let newday = day + 1
+        printfn "День %i: " day
+        printfn "Кожна точка витратила по %i товарiв" minusEachDay
+        if daysForDeliverToSpot = 1 then
+            let newdaysForDeliverToSpot = timeOrderError expetcDaysForDeliver -2 2
+            printfn "Кожна точка отримала по %i товарiв" (minusEachDay * expetcDaysForDeliver)
+            printfn "Кожна точка зробила запит на %i товарiв" (minusEachDay * expetcDaysForDeliver)
+            if daysForDeliverToShop = 1 then
+                let newdaysForDeliverToShop = timeOrderError 104 -10 10
+                printfn "Магазин отримав %i товарiв з заводу" (104 * minusEachDay * numberOfSpots)
+                let newcurProductShop = curProductShop - (numberOfSpots * (minusEachDay * expetcDaysForDeliver)) + (104 * minusEachDay * numberOfSpots)
+                let newcurProduct = curProductSpot - minusEachDay + (minusEachDay * expetcDaysForDeliver)
+                printfn "Товару на точках: %A" (allDemands numberOfSpots empty newcurProduct)
+                printfn "Товару у магазинi: %i" newcurProductShop
+                nextDay newday maxDays minusEachDay newdaysForDeliverToSpot newdaysForDeliverToShop expetcDaysForDeliver newcurProduct numberOfSpots newcurProductShop
+            else
+                let newcurProductShop = isThereEnoughProduct curProductShop (curProductShop - (numberOfSpots * (minusEachDay * expetcDaysForDeliver)))
+                let newcurProduct = isThereEnoughProductSpot (curProductSpot - minusEachDay) (curProductSpot - minusEachDay + (minusEachDay * expetcDaysForDeliver)) (curProductShop - (numberOfSpots * (minusEachDay * expetcDaysForDeliver)))
+                printfn "Товару на точках: %A" (allDemands numberOfSpots empty newcurProduct)
+                printfn "Товару у магазинi: %i" newcurProductShop
+                let newdaysForDeliverToShop = daysForDeliverToShop - 1
+                nextDay newday maxDays minusEachDay newdaysForDeliverToSpot newdaysForDeliverToShop expetcDaysForDeliver newcurProduct numberOfSpots newcurProductShop
+        else
+            let newdaysForDeliverToSpot = daysForDeliverToSpot - 1
+            let newcurProduct = curProductSpot - minusEachDay
+            printfn "Товари на точках: %A" (allDemands numberOfSpots empty newcurProduct)
+            if daysForDeliverToShop = 1 then
+                let newdaysForDeliverToShop = timeOrderError 104 -10 10
+                let newcurProductShop = curProductShop + (104 * minusEachDay * numberOfSpots)
+                printfn "Товару у магазинi: %i" newcurProductShop
+                printfn "Магазин отримав %i товарiв з заводу" (104 * minusEachDay * numberOfSpots)
+                nextDay newday maxDays minusEachDay newdaysForDeliverToSpot newdaysForDeliverToShop expetcDaysForDeliver newcurProduct numberOfSpots newcurProductShop
+            else
+                let newdaysForDeliverToShop = daysForDeliverToShop - 1
+                nextDay newday maxDays minusEachDay newdaysForDeliverToSpot newdaysForDeliverToShop expetcDaysForDeliver newcurProduct numberOfSpots curProductShop
+;Кiлькicть днiв симуляцiї            
+let maxDays = 360
+;Витрати кожного дня однiєї точки
+let minusEachDay = 10
+;Скiльки днiв очiкується доставка
+let expetcDaysForDeliver = 6
+;Кiлькiсть точок
+let numberOfSpots = 6
+nextDay 1 maxDays minusEachDay 1 1 expetcDaysForDeliver 0 numberOfSpots 0

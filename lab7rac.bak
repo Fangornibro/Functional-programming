@@ -1,0 +1,60 @@
+;Запис рядків у файл
+;(let ((port (open-output-file "C:\\Users\\kuzmi\\Desktop\\Функціональне програмування\\Files\\output.txt"))) 
+;(write '(When I find myself in times of trouble) port)
+;(write '(Mother Mary comes to me) port)
+;(close-output-port port))
+
+;Виведення рядків файлу в заданій послідовності
+(define (get-song n)  ; вибрати номер рядка файлу
+  (let ((port (open-input-file "C:\\Users\\kuzmi\\Desktop\\Функціональне програмування\\Files\\output.txt")))  ; відкрити файл
+    (skip-songs (- n 1) port)  ; пропустити рядок
+    (let ((answer (read port)))
+      (close-input-port port)
+      answer)))
+
+(define (skip-songs n port)   ; пропустити рядки
+  (if (= n 0)
+      'done
+      (begin (read port)
+             (skip-songs (- n 1) port))))
+
+;Виведення файлу на екран як в блокноті
+(define (print-file name) 
+  (let ((port (open-input-file name))) ;відкрити порт
+    (print-file-helper port)           ;вивести рядки файлу
+    (close-input-port port)            ; закрити порт
+    'done))
+
+(define (print-file-helper port)     ; допоміжна процедура друку файлу
+  (let ((action (read port)))         ; читати порт    
+      (if (eof-object? action)        ;якщо кінець файлу 
+        'done                         ; робота звкінчена
+        (begin (write action)         ; інакше писати файл
+              (print-file-helper port)))))
+
+(display "Printed file:") ; виклик процедур 
+(newline)
+(print-file "C:\\Users\\kuzmi\\Desktop\\Функціональне програмування\\Files\\output.txt")
+;Роздiлення строки на слова
+(define (split-string lst)
+  (let loop ((acc '()) (current '()) (chars (string->list lst)))
+    (cond ((null? chars)
+           (reverse (cons (list->string (reverse current)) acc)))
+          ((char=? (car chars) #\space)
+           (loop (cons (list->string (reverse current)) acc)
+                 '()
+                 (cdr chars)))
+          (else
+           (loop acc
+                 (cons (car chars) current)
+                 (cdr chars))))))
+;Перетворення списку на строку
+(define (slist->string slst)
+  (cond ((null? slst) "")
+        ((null? (cdr slst)) (symbol->string (car slst)))
+        (else (string-append (symbol->string (car slst))
+                             " "
+                             (slist->string (cdr slst))))))
+
+(define s1 (split-string(slist->string (get-song 1))))
+(define s2 (split-string(slist->string (get-song 2))))

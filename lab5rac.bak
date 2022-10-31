@@ -1,0 +1,140 @@
+;14.1
+(display "14.1")
+;Функцiя для зчитування чисел написаних користувачем
+(define (userInput s)
+  (display "Please enter number ")
+  (display s)
+  (display ": ")
+  (define n (read))
+  n)
+;Додавання двох списків
+(define (my-append lis1 lis2)
+  (cond ((null? lis1)
+         lis2)
+        (else
+         (cons (car lis1)
+               (my-append (cdr lis1) lis2)))))
+;Кількість елементів списку
+(define (my-length lis)
+   (cond ((null? lis)
+          0)
+         (else
+          (+ 1 (my-length (cdr lis))))))
+;Чисельник
+(define (numer x) (car x))
+;Знаменник
+(define (denom x) (cdr x))
+;Створення пари
+(define (make-pair n d) (cons n d))
+;Друк пари 
+(define(print-pair x)
+  (newline)
+  (display (numer x))
+  (display "/")
+  (display (denom x)))   
+;Функцiя заповнення списку дробiв користувачем
+(define (fillFractionList n lis) 
+  (cond
+    ((not (= n 0))
+     (fillFractionList (- n 1) (my-append lis (list (make-pair (userInput "numerator") (userInput "denominator")))))
+     )
+    (else
+     lis
+     )
+    ))
+;Функцiя вiдображення списку дробiв
+(define printFractionList lis
+    if list.Length <> 0 then
+        (print-pair (list-ref lis 0)) 
+        (display ", ")
+        (printFractionList (cdr lis))
+    else    
+        printfn ""
+)
+;Функцiя множення дробiв
+let multiplicationOfFractions (f1 : 'int list) (f2 : 'int list) =
+    let a = f1.[0] * f2.[0]
+    let b = f1.[1] * f2.[1]
+    let newfraction = [a;b]
+    newfraction
+
+;Функцiя множення пар дробiв у списку
+let rec pairMultiplication (list : 'A list) result =
+    if list.Length <> 0 then
+        let f = multiplicationOfFractions list.[0] list.[1]
+        let newresult = result @ [f]
+        let newlist = list.Tail
+        let newnewlist = newlist.Tail
+        pairMultiplication newnewlist newresult
+    else
+        result
+;Виклик усiх функцiй
+(define n (userInput "n"))
+(define empty (list))
+(define lis (fillFractionList n empty))
+(display "List: ")
+printFractionList list
+printfn "List with pair multiplication: "
+let result = pairMultiplication list empty
+printFractionList result
+printfn "14.2"
+;14.2
+;Функцiя створення комплексних чисел
+let createComplex a b =
+    let couple = [a; b]
+    couple
+;Функцiя вiдображення комплексних чисел
+let rec printComplex (list : 'decimal list) =
+    if list.[1] >= 0.m then
+        printf "%M+%M*i" list.[0] list.[1]
+    else
+        printf "%M%M*i" list.[0] list.[1]
+
+;Функцiя заповнення списку комплексних чисел користувачем
+let rec fillComplexList n list = 
+    if n <> 0 then
+        let newn = n - 1
+        let a = Convert.ToDecimal(userInput "a")
+        let b = Convert.ToDecimal(userInput "b")
+        let cop = createComplex a b
+        let newlist = list @ [cop]
+        fillComplexList newn newlist
+    else
+        list
+;Функцiя вiдображення списку комплексних чисел
+let rec printComplexList (list : 'A list) =
+    if list.Length <> 0 then
+        printComplex list.[0]
+        printf ", "
+        let newlist = list.Tail
+        printComplexList newlist
+
+;Функцiя дiлення комплексних чисел
+let complexFractions (f1 : 'decimal list) (f2 : 'decimal list) =
+    let numerator = f1.[0] * f2.[0] + (f1.[1] * (-1.m * f2.[1])) * -1.m
+    let inumerator = f1.[0] * (-1.m * f2.[1]) + f1.[1] * f2.[0]
+    let denominator = f2.[0] * f2.[0] + f2.[1] * f2.[1]
+    let newa = numerator / denominator
+    let newb = inumerator / denominator
+    let couple = createComplex newa newb
+    couple
+
+;Функцiя дiлення пар комплексних чисел у списку
+let rec pairComplexFractions (list : 'A list) result =
+    if list.Length <> 0 then
+        let f = complexFractions list.[0] list.[1]
+        let newresult = result @ [f]
+        let newlist = list.Tail
+        let newnewlist = newlist.Tail
+        pairComplexFractions newnewlist newresult
+    else
+        result
+
+;Виклик усiх функцiй
+let n2 = userInput "n"
+let list2 = fillComplexList n2 empty
+printfn "List: "
+printComplexList list2
+printfn "Result list: "
+let result2 = pairComplexFractions list2 empty
+printComplexList result2
